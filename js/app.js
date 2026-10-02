@@ -1,8 +1,14 @@
-/**
- * Personal Digital Lab - Main Application Entrypoint
- * Author: Khalid Abdullah
+/*
+ * ==============================================================================
+ * Project: Portfolio Website / Digital Lab
+ * File: js/app.js
+ * Description: Client-side Single Page Application (SPA) entrypoint.
+ * Features:
+ *  - Orchestrates UI components (HeroCanvas, Projects, LiveStats, TerminalModal)
+ *  - Integrates GitHub live API for real-time repository stats
+ *  - Manages custom cursor, keyboard shortcuts, and command palette
+ * ==============================================================================
  */
-
 import { CONFIG } from "./config.js";
 import { Navigation } from "./components/Navigation.js";
 import { HeroCanvas } from "./components/HeroCanvas.js";

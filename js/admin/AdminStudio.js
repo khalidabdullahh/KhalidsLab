@@ -1,13 +1,13 @@
 /**
  * Git-Based Admin Studio Controller
  * Author: Khalid Abdullah
- * Commits and publishes posts directly to GitHub Repository via GitHub Contents REST API
+ * Supports direct password login & dynamic post management for KhalidsLab
  */
 
 export class AdminStudio {
   constructor() {
     this.owner = "khalidabdullahh";
-    this.repo = "khalid-digital-lab";
+    this.repo = "KhalidsLab";
     this.token = localStorage.getItem("khalid_github_admin_token") || "";
     this.user = null;
     this.posts = [];
@@ -20,56 +20,71 @@ export class AdminStudio {
   async init() {
     this.bindEvents();
 
-    // 1. Check if token returned from 1-Click OAuth Callback in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlToken = urlParams.get("token");
-    if (urlToken) {
-      this.token = urlToken;
-      localStorage.setItem("khalid_github_admin_token", urlToken);
-      // Clean query string from browser address bar
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    if (this.token) {
-      await this.verifyAuth();
+    const isAuthenticated = localStorage.getItem("khalid_admin_authenticated") === "true";
+    if (isAuthenticated) {
+      this.user = {
+        login: "khalidabdullah",
+        avatar_url: "https://github.com/khalidabdullahh.png"
+      };
+      this.showDashboard();
+      await this.loadPosts();
     } else {
       this.showAuthScreen();
     }
   }
 
   bindEvents() {
-    // 1-Click GitHub OAuth Login Button
-    document.getElementById("btn-github-oauth")?.addEventListener("click", () => {
+    const handleLogin = () => {
+      const usernameInput = document.getElementById("username-input");
+      const passwordInput = document.getElementById("password-input");
       const authStatus = document.getElementById("auth-status-text");
-      if (authStatus) {
-        authStatus.innerHTML = `<span class="text-cyan animate-pulse">Redirecting to GitHub OAuth...</span>`;
-      }
-      window.location.href = "/api/auth/login";
-    });
 
-    const submitPatLogin = async () => {
-      const input = document.getElementById("pat-input");
-      const token = input?.value.trim();
-      const authStatus = document.getElementById("auth-status-text");
-      if (!token) {
+      const username = (usernameInput?.value || "").trim().toLowerCase();
+      const password = (passwordInput?.value || "").trim();
+
+      if (!username || !password) {
         if (authStatus) {
-          authStatus.innerHTML = `<span class="text-rose-400 font-mono text-[11px]">Please enter your GitHub Personal Access Token.</span>`;
+          authStatus.innerHTML = `<span class="text-rose-400 font-mono text-[11px]">Please enter both username and password.</span>`;
         }
-        input?.focus();
         return;
       }
-      this.token = token;
-      await this.verifyAuth();
+
+      const isValidUser = username === "khalidabdullah" || username === "khalidabdullahh";
+      const isValidPass = password === "Khalid0080";
+
+      if (isValidUser && isValidPass) {
+        localStorage.setItem("khalid_admin_authenticated", "true");
+        this.user = {
+          login: "khalidabdullah",
+          avatar_url: "https://github.com/khalidabdullahh.png"
+        };
+        if (authStatus) {
+          authStatus.innerHTML = `<span class="text-emerald-400 font-mono text-[11px]">✓ Access Granted! Launching Studio...</span>`;
+        }
+        setTimeout(() => {
+          this.showDashboard();
+          this.loadPosts();
+        }, 350);
+      } else {
+        if (authStatus) {
+          authStatus.innerHTML = `<span class="text-rose-400 font-mono text-[11px]">⚠️ Invalid username or password.</span>`;
+        }
+      }
     };
 
-    // Manual PAT Login Form
-    document.getElementById("btn-auth-login")?.addEventListener("click", submitPatLogin);
+    document.getElementById("btn-auth-login")?.addEventListener("click", handleLogin);
 
-    // Enter key support in PAT input
-    document.getElementById("pat-input")?.addEventListener("keydown", (e) => {
+    document.getElementById("password-input")?.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        submitPatLogin();
+        handleLogin();
+      }
+    });
+
+    document.getElementById("username-input")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("password-input")?.focus();
       }
     });
 
@@ -110,68 +125,29 @@ export class AdminStudio {
     });
   }
 
-  async verifyAuth() {
-    const authStatus = document.getElementById("auth-status-text");
-    if (authStatus) {
-      authStatus.innerHTML = `<span class="text-cyan animate-pulse">⏳ Verifying credentials with api.github.com...</span>`;
-    }
-
-    try {
-      const res = await fetch("https://api.github.com/user", {
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json"
-        }
-      });
-
-      if (!res.ok) {
-        throw new Error(`Invalid token or expired (HTTP ${res.status})`);
-      }
-
-      const userData = await res.json();
-      if (userData.login.toLowerCase() !== this.owner.toLowerCase()) {
-        throw new Error(`Access Denied: Logged in as @${userData.login}, but this lab belongs to @${this.owner}`);
-      }
-
-      this.user = userData;
-      localStorage.setItem("khalid_github_admin_token", this.token);
-      if (authStatus) {
-        authStatus.innerHTML = `<span class="text-emerald-400">✓ Authenticated as @${userData.login}! Launching...</span>`;
-      }
-      setTimeout(() => {
-        this.showDashboard();
-        this.loadPosts();
-      }, 400);
-    } catch (err) {
-      console.error("Auth error:", err);
-      localStorage.removeItem("khalid_github_admin_token");
-      this.token = "";
-      this.showAuthScreen();
-      if (authStatus) {
-        authStatus.innerHTML = `<span class="text-rose-400 font-mono text-[11px]">⚠️ ${err.message}</span>`;
-      }
-    }
-  }
-
   showAuthScreen() {
     document.getElementById("auth-view")?.classList.remove("hidden");
     document.getElementById("dashboard-view")?.classList.add("hidden");
+    const userPill = document.getElementById("user-pill");
+    if (userPill) userPill.classList.add("hidden");
   }
 
   showDashboard() {
     document.getElementById("auth-view")?.classList.add("hidden");
     document.getElementById("dashboard-view")?.classList.remove("hidden");
-    
+
+    const userPill = document.getElementById("user-pill");
     const userAvatar = document.getElementById("user-avatar");
     const userName = document.getElementById("user-name");
-    if (userAvatar) userAvatar.src = this.user.avatar_url;
-    if (userName) userName.textContent = `@${this.user.login}`;
+
+    if (userPill) userPill.classList.remove("hidden");
+    if (userAvatar && this.user) userAvatar.src = this.user.avatar_url;
+    if (userName && this.user) userName.textContent = `@${this.user.login}`;
   }
 
   logout() {
-    this.token = "";
+    localStorage.removeItem("khalid_admin_authenticated");
     this.user = null;
-    localStorage.removeItem("khalid_github_admin_token");
     this.showAuthScreen();
   }
 
@@ -181,30 +157,26 @@ export class AdminStudio {
 
   async loadPosts() {
     const listEl = document.getElementById("admin-posts-list");
-    if (listEl) listEl.innerHTML = `<div class="p-4 text-xs font-mono text-text-muted">Loading posts from GitHub...</div>`;
+    if (listEl) listEl.innerHTML = `<div class="p-4 text-xs font-mono text-text-muted">Loading posts...</div>`;
 
     try {
-      // 1. Fetch posts-index.json from GitHub
-      const res = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/posts-index.json`, {
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json"
-        }
-      });
+      // 1. Try local/relative posts-index.json
+      let res = await fetch("posts/posts-index.json");
+      if (!res.ok) {
+        // Fallback to GitHub raw
+        res = await fetch(`https://raw.githubusercontent.com/${this.owner}/${this.repo}/main/posts/posts-index.json`);
+      }
 
       if (res.ok) {
-        const fileData = await res.json();
-        const contentStr = decodeURIComponent(escape(atob(fileData.content)));
-        this.posts = JSON.parse(contentStr);
-        this.indexSha = fileData.sha;
+        this.posts = await res.json();
       } else {
         this.posts = [];
       }
 
       this.renderPostsList();
     } catch (e) {
-      console.warn("Could not load posts from GitHub API", e);
-      if (listEl) listEl.innerHTML = `<div class="p-4 text-xs font-mono text-rose-400">Failed to load posts from GitHub.</div>`;
+      console.warn("Could not load posts", e);
+      if (listEl) listEl.innerHTML = `<div class="p-4 text-xs font-mono text-rose-400">Failed to load posts.</div>`;
     }
   }
 
@@ -249,22 +221,16 @@ export class AdminStudio {
     const postMeta = this.posts.find(p => p.slug === slug);
     if (!postMeta) return;
 
-    // Fetch full post file from GitHub
     try {
-      const res = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/${slug}.json`, {
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json"
-        }
-      });
+      let res = await fetch(`posts/${slug}.json`);
+      if (!res.ok) {
+        res = await fetch(`https://raw.githubusercontent.com/${this.owner}/${this.repo}/main/posts/${slug}.json`);
+      }
 
       if (!res.ok) throw new Error("Could not load post file");
-      const fileData = await res.json();
-      const contentStr = decodeURIComponent(escape(atob(fileData.content)));
-      const post = JSON.parse(contentStr);
+      const post = await res.json();
 
       this.editingSlug = slug;
-      this.editingSha = fileData.sha;
 
       document.getElementById("post-title").value = post.title || "";
       document.getElementById("post-slug").value = post.slug || slug;
@@ -274,7 +240,7 @@ export class AdminStudio {
       document.getElementById("post-content").value = post.content || "";
 
       document.getElementById("editor-mode-label").textContent = `Editing: ${post.title}`;
-      document.getElementById("btn-submit-post").textContent = "Update & Commit to GitHub 🚀";
+      document.getElementById("btn-submit-post").textContent = "Save & Update Post 🚀";
 
       this.updatePreview();
     } catch (e) {
@@ -288,7 +254,7 @@ export class AdminStudio {
 
     document.getElementById("post-form")?.reset();
     document.getElementById("editor-mode-label").textContent = "New Post";
-    document.getElementById("btn-submit-post").textContent = "Publish & Commit to GitHub 🚀";
+    document.getElementById("btn-submit-post").textContent = "Publish Post 🚀";
     this.updatePreview();
   }
 
@@ -326,37 +292,9 @@ export class AdminStudio {
 
     const submitBtn = document.getElementById("btn-submit-post");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Committing to GitHub...";
+    submitBtn.textContent = "Saving Post...";
 
     try {
-      // 1. Commit post JSON file to `posts/{slug}.json`
-      const jsonStr = JSON.stringify(postPayload, null, 2);
-      const encodedContent = btoa(unescape(encodeURIComponent(jsonStr)));
-
-      const filePutBody = {
-        message: this.editingSha ? `docs(posts): update post '${title}'` : `feat(posts): publish new post '${title}'`,
-        content: encodedContent
-      };
-      if (this.editingSha) {
-        filePutBody.sha = this.editingSha;
-      }
-
-      const fileRes = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/${slug}.json`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(filePutBody)
-      });
-
-      if (!fileRes.ok) {
-        const errJson = await fileRes.json();
-        throw new Error(errJson.message || "Failed to commit post file");
-      }
-
-      // 2. Update `posts/posts-index.json`
       const metaIndexItem = {
         id: postPayload.id,
         slug: postPayload.slug,
@@ -371,103 +309,38 @@ export class AdminStudio {
         published: true
       };
 
-      // Filter out old version if editing, and prepend new post
-      const updatedPostsList = [
+      this.posts = [
         metaIndexItem,
         ...this.posts.filter(p => p.slug !== slug)
       ];
 
-      const indexJsonStr = JSON.stringify(updatedPostsList, null, 2);
-      const encodedIndex = btoa(unescape(encodeURIComponent(indexJsonStr)));
+      // Download JSON file for easy commit
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(postPayload, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `${slug}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
 
-      const indexPutBody = {
-        message: `docs(posts): update posts index for '${title}'`,
-        content: encodedIndex
-      };
-      if (this.indexSha) {
-        indexPutBody.sha = this.indexSha;
-      }
-
-      const indexRes = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/posts-index.json`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(indexPutBody)
-      });
-
-      if (!indexRes.ok) {
-        console.warn("Index update warning:", await indexRes.json());
-      }
-
-      alert(`🎉 Successfully published '${title}' directly to GitHub!`);
+      alert(`🎉 Post '${title}' saved successfully! '${slug}.json' downloaded.`);
       this.resetEditor();
-      await this.loadPosts();
+      this.renderPostsList();
     } catch (e) {
       console.error(e);
       alert(`Publishing failed: ${e.message}`);
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Publish & Commit to GitHub 🚀";
+      submitBtn.textContent = "Publish Post 🚀";
     }
   }
 
   async deletePost(slug) {
-    if (!confirm(`Are you sure you want to delete '${slug}' from GitHub? This action cannot be undone.`)) {
+    if (!confirm(`Are you sure you want to remove '${slug}'?`)) {
       return;
     }
-
-    try {
-      // 1. Get SHA of file to delete
-      const fileRes = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/${slug}.json`, {
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json"
-        }
-      });
-
-      if (fileRes.ok) {
-        const fileData = await fileRes.json();
-        await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/${slug}.json`, {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Bearer ${this.token}`,
-            "Accept": "application/vnd.github.v3+json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: `chore(posts): delete post '${slug}'`,
-            sha: fileData.sha
-          })
-        });
-      }
-
-      // 2. Remove from index
-      const updatedList = this.posts.filter(p => p.slug !== slug);
-      const indexJsonStr = JSON.stringify(updatedList, null, 2);
-      const encodedIndex = btoa(unescape(encodeURIComponent(indexJsonStr)));
-
-      await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/posts/posts-index.json`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: `chore(posts): remove '${slug}' from index`,
-          content: encodedIndex,
-          sha: this.indexSha
-        })
-      });
-
-      alert(`Deleted post '${slug}'.`);
-      await this.loadPosts();
-    } catch (e) {
-      alert(`Delete failed: ${e.message}`);
-    }
+    this.posts = this.posts.filter(p => p.slug !== slug);
+    this.renderPostsList();
   }
 
   updatePreview() {
