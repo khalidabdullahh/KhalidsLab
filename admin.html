@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth theme-light">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Studio (CMS) // Khalid Abdullah Digital Lab</title>
+  <title>Admin Studio // Khalid Abdullah Digital Lab</title>
 
-  <!-- Early Theme Initialization -->
+  <!-- Early Theme Initialization (Dark default for Studio IDE feel) -->
   <script>
     (function() {
       try {
         const saved = localStorage.getItem("lab-theme");
-        if (saved === "dark") {
-          document.documentElement.classList.remove("theme-light");
-        } else {
+        if (saved === "light") {
           document.documentElement.classList.add("theme-light");
+        } else {
+          document.documentElement.classList.remove("theme-light");
         }
       } catch (e) {}
     })();
@@ -50,35 +50,80 @@
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+
+  <style>
+    /* Studio Specific Premium Styling */
+    .studio-editor-area {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      caret-color: #00f0ff;
+    }
+    .markdown-body img {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin: 12px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .toolbar-btn {
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .toolbar-btn:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      transition: all 0.2s ease;
+    }
+    .drop-zone.dragover {
+      border-color: #00f0ff;
+      background: rgba(0, 240, 255, 0.05);
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-surface text-text-primary selection:bg-cyan selection:text-black">
 
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-border">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-        <a href="index.html" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-elevated hover:bg-border border border-border text-xs font-mono text-cyan transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="index.html" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-elevated hover:bg-border border border-border text-xs font-mono text-cyan transition-all">
           <span>←</span>
-          <span class="hidden sm:inline">Back to Website</span>
-          <span class="sm:hidden text-[11px]">Site</span>
+          <span>Back to Website</span>
         </a>
-        <span class="text-border hidden md:inline">|</span>
-        <div class="hidden md:flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-xs font-mono font-bold tracking-wider text-text-primary uppercase">ADMIN STUDIO (CMS)</span>
+        <span class="text-border">|</span>
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs font-mono font-bold tracking-wider text-text-primary uppercase">STUDIO CMS</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan/15 text-cyan border border-cyan/30 hidden sm:inline">KhalidsLab</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+      <div class="flex items-center gap-3 shrink-0">
         <!-- Theme Toggle -->
-        <button id="btn-theme-toggle" class="p-1.5 sm:p-2 rounded-lg bg-surface-elevated border border-border text-text-secondary hover:text-amber-400 transition-all cursor-pointer text-xs sm:text-sm" title="Toggle Theme">
+        <button id="btn-theme-toggle" class="p-2 rounded-xl bg-surface-elevated border border-border text-text-secondary hover:text-cyan transition-all cursor-pointer text-xs" title="Toggle Theme">
           🌓
         </button>
 
-        <div id="user-pill" class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:py-1.5 rounded-xl bg-surface-elevated border border-border text-[11px] sm:text-xs font-mono">
-          <img id="user-avatar" class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-border" src="" alt="avatar" />
-          <span id="user-name" class="font-bold text-cyan hidden sm:inline">@khalidabdullahh</span>
-          <button id="btn-auth-logout" class="ml-1 sm:ml-2 text-[10px] text-rose-400 hover:underline cursor-pointer">Logout</button>
+        <div id="user-pill" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-elevated border border-border text-xs font-mono">
+          <img id="user-avatar" class="w-5 h-5 rounded-full bg-border border border-cyan/30" src="https://github.com/khalidabdullahh.png" alt="avatar" />
+          <span id="user-name" class="font-bold text-cyan">@khalidabdullah</span>
+          <button id="btn-auth-logout" class="ml-2 text-[10px] text-rose-400 hover:underline cursor-pointer">Logout</button>
         </div>
       </div>
     </div>
@@ -87,135 +132,206 @@
   <!-- Main Workspace -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <!-- 1. AUTHENTICATION VIEW (Shown when not logged in) -->
-    <div id="auth-view" class="max-w-md mx-auto my-12 p-6 sm:p-8 rounded-3xl bg-surface-elevated border border-cyan/30 shadow-2xl space-y-6">
+    <!-- 1. AUTHENTICATION VIEW -->
+    <div id="auth-view" class="max-w-md mx-auto my-16 p-8 rounded-3xl bg-surface-elevated border border-cyan/30 shadow-2xl space-y-6">
       <div class="text-center space-y-2">
-        <div class="w-12 h-12 mx-auto rounded-2xl bg-cyan/15 border border-cyan/40 flex items-center justify-center text-xl text-cyan font-mono">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-cyan/15 border border-cyan/40 flex items-center justify-center text-2xl text-cyan font-mono shadow-inner">
           🔐
         </div>
-        <h2 class="text-xl font-bold text-text-primary">Admin Studio Login</h2>
+        <h2 class="text-2xl font-bold text-text-primary font-display">Admin Studio Login</h2>
         <p class="text-xs text-text-secondary">
-          Publish and manage articles on <code class="text-cyan">khalidabdullahh/KhalidsLab</code>.
+          Enter your operator credentials to access <code class="text-cyan font-bold">KhalidsLab CMS</code>.
         </p>
       </div>
 
-      <div class="space-y-4">
-        <div class="space-y-3">
-          <div>
-            <label class="block text-xs font-mono font-bold text-text-primary mb-1">Username</label>
-            <input type="text" id="username-input" placeholder="khalidabdullah" autocomplete="username" class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-mono font-bold text-text-primary mb-1">Password</label>
-            <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password" class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none" />
-          </div>
-
-          <button id="btn-auth-login" class="w-full py-3 rounded-xl bg-cyan hover:bg-cyan-glow text-black text-xs font-mono font-bold transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 mt-2">
-            <span>Authorize & Launch Studio →</span>
-          </button>
+      <div class="space-y-4 pt-2">
+        <div>
+          <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">Username</label>
+          <input type="text" id="username-input" placeholder="khalidabdullah" autocomplete="username" class="w-full px-4 py-3 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none transition-all" />
         </div>
 
-        <div id="auth-status-text" class="text-xs font-mono text-center min-h-4"></div>
+        <div>
+          <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">Password</label>
+          <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password" class="w-full px-4 py-3 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none transition-all" />
+        </div>
+
+        <button id="btn-auth-login" class="w-full py-3.5 rounded-xl bg-cyan hover:bg-cyan-glow text-black text-xs font-mono font-bold transition-all shadow-lg hover:shadow-cyan/25 cursor-pointer flex items-center justify-center gap-2 mt-2">
+          <span>Authorize & Launch Studio →</span>
+        </button>
+
+        <div id="auth-status-text" class="text-xs font-mono text-center min-h-5 pt-1"></div>
       </div>
 
-      <div class="p-3.5 rounded-xl bg-surface border border-border text-[11px] font-mono text-text-muted space-y-1.5 leading-relaxed">
+      <div class="p-4 rounded-2xl bg-surface border border-border text-[11px] font-mono text-text-muted space-y-1 leading-relaxed">
         <div class="font-bold text-text-primary flex items-center gap-1.5">
           <span>🔒</span>
-          <span>Permanent Browser Session:</span>
+          <span>Encrypted Session:</span>
         </div>
-        <p>Once logged in, your studio session is securely remembered in this browser.</p>
+        <p>Your studio workspace is automatically remembered in this browser.</p>
       </div>
     </div>
 
-    <!-- 2. DASHBOARD VIEW (Shown after authentication) -->
+    <!-- 2. DASHBOARD WORKSPACE -->
     <div id="dashboard-view" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- Left Column: Posts List & Actions (4 cols) -->
-      <div class="lg:col-span-4 space-y-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-xs font-mono font-bold tracking-widest text-cyan uppercase">PUBLISHED POSTS</h3>
-          <button id="btn-new-post" class="px-3 py-1.5 rounded-lg bg-cyan text-black text-xs font-mono font-bold hover:bg-cyan-glow transition-all cursor-pointer">
-            + New Post
-          </button>
-        </div>
+      <!-- Left Column: Posts Manager (4 cols) -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="p-5 rounded-3xl bg-surface-elevated border border-border shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono font-bold tracking-widest text-cyan uppercase flex items-center gap-2">
+              <span>📰</span> PUBLISHED ARTICLES
+            </h3>
+            <button id="btn-new-post" class="px-3 py-1.5 rounded-xl bg-cyan text-black text-xs font-mono font-bold hover:bg-cyan-glow transition-all cursor-pointer shadow-md">
+              + New Post
+            </button>
+          </div>
 
-        <!-- Scrollable Posts List -->
-        <div id="admin-posts-list" class="space-y-2.5 max-h-[720px] overflow-y-auto pr-1">
-          <!-- Dynamically populated -->
+          <!-- Search filter for posts -->
+          <div class="relative">
+            <input type="text" id="search-posts-input" placeholder="Search posts by title or tag..." class="w-full px-3.5 py-2 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none" />
+          </div>
+
+          <!-- Scrollable Posts List -->
+          <div id="admin-posts-list" class="space-y-2.5 max-h-[620px] overflow-y-auto pr-1">
+            <!-- Dynamically populated -->
+          </div>
         </div>
       </div>
 
-      <!-- Right Column: Post Editor & Live Preview (8 cols) -->
+      <!-- Right Column: Studio Editor (8 cols) -->
       <div class="lg:col-span-8 space-y-6">
-        <div class="p-6 rounded-3xl bg-surface-elevated/80 border border-border shadow-xl space-y-6">
+        <div class="p-6 sm:p-7 rounded-3xl bg-surface-elevated border border-border shadow-2xl space-y-6">
+          
           <div class="flex items-center justify-between pb-4 border-b border-border">
-            <span id="editor-mode-label" class="text-xs font-mono font-bold text-cyan uppercase">New Post</span>
-            <span class="text-[11px] font-mono text-text-muted">Direct GitHub API Publisher</span>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan animate-ping"></span>
+              <span id="editor-mode-label" class="text-xs font-mono font-bold text-cyan uppercase">Create New Post</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono text-text-muted">
+              <span id="word-count-badge" class="px-2 py-0.5 rounded-md bg-surface border border-border">0 words</span>
+              <span id="read-time-badge" class="px-2 py-0.5 rounded-md bg-surface border border-border">1 min read</span>
+            </div>
           </div>
 
-          <form id="post-form" class="space-y-4">
+          <form id="post-form" class="space-y-5">
+            <!-- Title & Category -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div class="sm:col-span-2">
-                <label class="block text-xs font-mono font-bold text-text-primary mb-1">Post Title *</label>
-                <input type="text" id="post-title" placeholder="e.g., Designing Zero-Lag State Machines" required class="w-full px-3.5 py-2 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
+                <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">Post Title *</label>
+                <input type="text" id="post-title" placeholder="e.g. Building High-Frequency Trading Systems with Rust" required class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
               </div>
 
               <div>
-                <label class="block text-xs font-mono font-bold text-text-primary mb-1">Category</label>
-                <select id="post-category" class="w-full px-3.5 py-2 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none">
+                <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">Category</label>
+                <select id="post-category" class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none cursor-pointer">
                   <option value="Engineering">Engineering</option>
-                  <option value="Release">Release</option>
                   <option value="Architecture">Architecture</option>
                   <option value="Research">Research</option>
+                  <option value="Release">Release</option>
                   <option value="Announcement">Announcement</option>
                 </select>
               </div>
             </div>
 
+            <!-- Slug & Tags -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-mono font-bold text-text-primary mb-1">URL Slug</label>
-                <input type="text" id="post-slug" placeholder="designing-zero-lag-state-machines" class="w-full px-3.5 py-2 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
+                <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">URL Slug</label>
+                <input type="text" id="post-slug" placeholder="building-high-frequency-trading-systems" class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
               </div>
 
               <div>
-                <label class="block text-xs font-mono font-bold text-text-primary mb-1">Tags (Comma-separated)</label>
-                <input type="text" id="post-tags" placeholder="Next.js, PostgreSQL, Architecture" class="w-full px-3.5 py-2 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
+                <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">Tags (Comma-separated)</label>
+                <input type="text" id="post-tags" placeholder="Rust, Finance, Low Latency, Systems" class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
               </div>
             </div>
 
+            <!-- Tagline -->
             <div>
-              <label class="block text-xs font-mono font-bold text-text-primary mb-1">Tagline / Short Summary</label>
-              <input type="text" id="post-tagline" placeholder="Brief 1-sentence summary of the article..." class="w-full px-3.5 py-2 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
+              <label class="block text-xs font-mono font-bold text-text-primary mb-1.5">Tagline / Short Summary</label>
+              <input type="text" id="post-tagline" placeholder="A comprehensive breakdown of sub-millisecond execution engines and market data feeds..." class="w-full px-4 py-2.5 rounded-xl bg-surface border border-border focus:border-cyan text-xs font-mono text-text-primary focus:outline-none" />
             </div>
 
-            <!-- Editor Split: Textarea + Live Preview -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div>
-                <label class="block text-xs font-mono font-bold text-text-primary mb-1">Markdown Content *</label>
-                <textarea id="post-content" rows="16" placeholder="Write in Markdown (supports ## Headers, **bold**, `code`, ```snippets, > quotes)..." class="w-full p-3.5 rounded-xl bg-[#06090f] text-cyan border border-border focus:border-cyan text-xs font-mono leading-relaxed focus:outline-none resize-y"></textarea>
+            <!-- Markdown Toolbar & Image Upload -->
+            <div class="space-y-2 pt-2">
+              <div class="flex flex-wrap items-center justify-between gap-2 p-2 rounded-2xl bg-surface border border-border">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button type="button" class="toolbar-btn" data-action="bold" title="Bold"><strong>B</strong></button>
+                  <button type="button" class="toolbar-btn" data-action="italic" title="Italic"><em>I</em></button>
+                  <button type="button" class="toolbar-btn" data-action="h1" title="Heading 1">H1</button>
+                  <button type="button" class="toolbar-btn" data-action="h2" title="Heading 2">H2</button>
+                  <button type="button" class="toolbar-btn" data-action="h3" title="Heading 3">H3</button>
+                  <span class="text-border">|</span>
+                  <button type="button" class="toolbar-btn" data-action="code" title="Inline Code">&lt;/&gt;</button>
+                  <button type="button" class="toolbar-btn" data-action="codeblock" title="Code Block">```</button>
+                  <button type="button" class="toolbar-btn" data-action="quote" title="Blockquote">❝</button>
+                  <button type="button" class="toolbar-btn" data-action="list" title="Bullet List">• List</button>
+                  <button type="button" class="toolbar-btn" data-action="link" title="Insert Link">🔗 Link</button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <!-- Image Upload Button -->
+                  <label class="toolbar-btn bg-cyan/10 text-cyan border-cyan/40 hover:bg-cyan/20 cursor-pointer">
+                    <span>🖼️ Upload Image</span>
+                    <input type="file" id="image-file-input" accept="image/*" class="hidden" />
+                  </label>
+                </div>
               </div>
 
+              <!-- Drag & Drop Zone Hint -->
+              <div id="image-drop-zone" class="drop-zone p-3 rounded-xl bg-surface/50 text-center text-[11px] font-mono text-text-muted flex items-center justify-center gap-2 cursor-pointer">
+                <span>📁 Drag & Drop any image file here or click "Upload Image" to embed directly in Markdown</span>
+              </div>
+            </div>
+
+            <!-- Split Editor & Live Preview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              <!-- Editor Area -->
               <div>
-                <label class="block text-xs font-mono font-bold text-text-primary mb-1">Live Side-by-Side Preview</label>
-                <div id="live-markdown-preview" class="p-4 rounded-xl bg-surface border border-border/80 h-[320px] sm:h-[350px] overflow-y-auto text-xs leading-relaxed">
-                  <!-- Live Preview -->
+                <label class="block text-xs font-mono font-bold text-text-primary mb-1.5 flex items-center justify-between">
+                  <span>Markdown Editor</span>
+                  <span class="text-[10px] text-text-muted font-normal">Supports full Markdown & HTML</span>
+                </label>
+                <textarea id="post-content" rows="18" placeholder="Write your article in Markdown here...&#10;&#10;## Introduction&#10;Start drafting your concepts..." class="studio-editor-area w-full p-4 rounded-2xl border border-border focus:border-cyan text-xs font-mono leading-relaxed focus:outline-none resize-y min-h-[420px]"></textarea>
+              </div>
+
+              <!-- Live Preview Area -->
+              <div>
+                <label class="block text-xs font-mono font-bold text-text-primary mb-1.5 flex items-center justify-between">
+                  <span>Live Preview</span>
+                  <span class="text-[10px] text-cyan font-normal">Real-Time Reader View</span>
+                </label>
+                <div id="live-markdown-preview" class="p-5 rounded-2xl bg-surface border border-border/80 h-[420px] overflow-y-auto text-xs leading-relaxed shadow-inner">
+                  <!-- Live Preview dynamically rendered -->
                 </div>
               </div>
             </div>
 
-            <div class="pt-4 flex items-center justify-between border-t border-border">
-              <span class="text-[11px] font-mono text-text-muted">Commits directly to branch <code class="text-cyan">main</code></span>
-              <button type="submit" id="btn-submit-post" class="px-6 py-2.5 rounded-xl bg-cyan hover:bg-cyan-glow text-black text-xs font-mono font-bold transition-all shadow-xl cursor-pointer">
-                Publish & Commit to GitHub 🚀
-              </button>
+            <!-- Bottom Action Footer -->
+            <div class="pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border">
+              <div class="text-[11px] font-mono text-text-muted flex items-center gap-2">
+                <span>⚡ Repository:</span>
+                <code class="text-cyan px-2 py-0.5 rounded bg-surface border border-border font-bold">khalidabdullahh/KhalidsLab</code>
+              </div>
+
+              <div class="flex items-center gap-3 w-full sm:w-auto">
+                <button type="button" id="btn-copy-json" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-surface-elevated hover:bg-border border border-border text-xs font-mono text-text-secondary hover:text-cyan transition-all cursor-pointer">
+                  📋 Copy JSON
+                </button>
+                <button type="submit" id="btn-submit-post" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-cyan hover:bg-cyan-glow text-black text-xs font-mono font-bold transition-all shadow-xl hover:shadow-cyan/25 cursor-pointer">
+                  Publish Post 🚀
+                </button>
+              </div>
             </div>
           </form>
+
         </div>
       </div>
     </div>
   </main>
+
+  <!-- Floating Toast Container -->
+  <div id="studio-toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <script type="module" src="js/admin/AdminStudio.js"></script>
 </body>
