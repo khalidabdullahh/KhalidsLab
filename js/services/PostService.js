@@ -67,8 +67,13 @@ export class PostService {
     this.isLoading = true;
 
     try {
-      // Try local path first (works locally and on Vercel)
-      const res = await fetch(`posts/posts-index.json?_t=${Date.now()}`);
+      // 1. Try local path first
+      let res = await fetch(`posts/posts-index.json?_t=${Date.now()}`);
+      if (!res.ok) {
+        // 2. Fallback to GitHub raw
+        res = await fetch(`https://raw.githubusercontent.com/khalidabdullahh/KhalidsLab/main/posts/posts-index.json?_t=${Date.now()}`);
+      }
+
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
@@ -77,7 +82,7 @@ export class PostService {
         }
       }
     } catch (err) {
-      console.warn("PostService: Failed to fetch index locally, falling back to cache", err);
+      console.warn("PostService: Failed to fetch index, falling back to cache", err);
     } finally {
       this.isLoading = false;
       window.dispatchEvent(new CustomEvent("posts-updated", { detail: { posts: this.posts } }));

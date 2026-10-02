@@ -26,9 +26,9 @@ export class GitHubService {
     // Initial fallback data so the site immediately displays rich repo metadata
     this.defaultRepos = [
       {
-        name: "khalid-digital-lab",
-        fullName: "khalidabdullahh/khalid-digital-lab",
-        htmlUrl: "https://github.com/khalidabdullahh/khalid-digital-lab",
+        name: "KhalidsLab",
+        fullName: "khalidabdullahh/KhalidsLab",
+        htmlUrl: "https://github.com/khalidabdullahh/KhalidsLab",
         description: "Personal Digital Lab & Innovation Hub: living portfolio, research lab, interactive simulators & dynamic knowledge garden.",
         language: "JavaScript",
         stars: 1,
