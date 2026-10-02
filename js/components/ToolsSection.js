@@ -57,67 +57,69 @@ export class ToolsSection {
           <div id="interactive-tool-mount"></div>
         </div>
 
-        <!-- 2. Product Ecosystem Directory -->
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xs font-mono font-bold tracking-widest text-text-muted uppercase">
-            PRODUCT ECOSYSTEM DIRECTORY
-          </h3>
-          <span class="text-xs font-mono text-cyan">${TOOLS.length} Usable Products & Tools</span>
-        </div>
+        ${TOOLS.length > 0 ? `
+          <!-- 2. Product Ecosystem Directory -->
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xs font-mono font-bold tracking-widest text-text-muted uppercase">
+              PRODUCT ECOSYSTEM DIRECTORY
+            </h3>
+            <span class="text-xs font-mono text-cyan">${TOOLS.length} Usable Products & Tools</span>
+          </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          ${TOOLS.map(tool => `
-            <div class="tool-card group relative p-6 rounded-2xl bg-surface border border-border hover:border-cyan/50 hover:bg-surface-elevated/70 transition-all duration-300 flex flex-col justify-between shadow-xl">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-surface-elevated border border-border text-cyan">
-                    ${tool.category}
-                  </span>
-                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold ${
-                    tool.statusColor === "emerald" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" :
-                    tool.statusColor === "amber" ? "bg-amber-500/15 text-amber-300 border border-amber-500/30" :
-                    "bg-violet-500/15 text-violet-300 border border-violet-500/30"
-                  }">
-                    ● ${tool.status}
-                  </span>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${TOOLS.map(tool => `
+              <div class="tool-card group relative p-6 rounded-2xl bg-surface border border-border hover:border-cyan/50 hover:bg-surface-elevated/70 transition-all duration-300 flex flex-col justify-between shadow-xl">
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-surface-elevated border border-border text-cyan">
+                      ${tool.category}
+                    </span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold ${
+                      tool.statusColor === "emerald" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" :
+                      tool.statusColor === "amber" ? "bg-amber-500/15 text-amber-300 border border-amber-500/30" :
+                      "bg-violet-500/15 text-violet-300 border border-violet-500/30"
+                    }">
+                      ● ${tool.status}
+                    </span>
+                  </div>
+
+                  <h4 class="text-lg font-bold text-text-primary group-hover:text-cyan transition-colors tracking-tight">
+                    ${tool.name}
+                  </h4>
+
+                  <p class="text-xs text-text-secondary mt-2 line-clamp-3 leading-relaxed">
+                    ${tool.description}
+                  </p>
+
+                  <!-- Capabilities list -->
+                  <ul class="space-y-1.5 mt-4 pt-3 border-t border-border/60">
+                    ${tool.capabilities.slice(0, 3).map(cap => `
+                      <li class="flex items-start gap-2 text-[11px] text-text-secondary">
+                        <span class="text-cyan font-bold">✓</span>
+                        <span class="line-clamp-1">${cap}</span>
+                      </li>
+                    `).join("")}
+                  </ul>
                 </div>
 
-                <h4 class="text-lg font-bold text-text-primary group-hover:text-cyan transition-colors tracking-tight">
-                  ${tool.name}
-                </h4>
+                <!-- Footer Actions -->
+                <div class="mt-6 pt-4 border-t border-border/70 flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-mono text-text-muted">${tool.pricing}</span>
 
-                <p class="text-xs text-text-secondary mt-2 line-clamp-3 leading-relaxed">
-                  ${tool.description}
-                </p>
-
-                <!-- Capabilities list -->
-                <ul class="space-y-1.5 mt-4 pt-3 border-t border-border/60">
-                  ${tool.capabilities.slice(0, 3).map(cap => `
-                    <li class="flex items-start gap-2 text-[11px] text-text-secondary">
-                      <span class="text-cyan font-bold">✓</span>
-                      <span class="line-clamp-1">${cap}</span>
-                    </li>
-                  `).join("")}
-                </ul>
+                  ${tool.isInteractiveInSite ? `
+                    <button class="launch-bench-btn text-xs font-mono font-bold text-cyan hover:underline flex items-center gap-1 cursor-pointer" data-bench="${tool.id}">
+                      <span>${tool.actionLabel}</span>
+                    </button>
+                  ` : `
+                    <a href="${tool.externalUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-cyan hover:underline flex items-center gap-1">
+                      <span>${tool.actionLabel}</span>
+                    </a>
+                  `}
+                </div>
               </div>
-
-              <!-- Footer Actions -->
-              <div class="mt-6 pt-4 border-t border-border/70 flex items-center justify-between gap-2">
-                <span class="text-[11px] font-mono text-text-muted">${tool.pricing}</span>
-
-                ${tool.isInteractiveInSite ? `
-                  <button class="launch-bench-btn text-xs font-mono font-bold text-cyan hover:underline flex items-center gap-1 cursor-pointer" data-bench="${tool.id}">
-                    <span>${tool.actionLabel}</span>
-                  </button>
-                ` : `
-                  <a href="${tool.externalUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-cyan hover:underline flex items-center gap-1">
-                    <span>${tool.actionLabel}</span>
-                  </a>
-                `}
-              </div>
-            </div>
-          `).join("")}
-        </div>
+            `).join("")}
+          </div>
+        ` : ""}
       </div>
     `;
   }
