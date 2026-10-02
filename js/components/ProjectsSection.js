@@ -396,7 +396,7 @@ export class ProjectsSection {
     // Fetch README content
     const readmeMarkdown = await this.fetchReadme(repo);
     if (modalContent) {
-      modalContent.innerHTML = this.renderMarkdown(readmeMarkdown, repo.name);
+      modalContent.innerHTML = this.renderMarkdown(readmeMarkdown, repo.name, repo.isPrivate);
     }
   }
 
@@ -447,7 +447,7 @@ export class ProjectsSection {
 
     if (!content) {
       if (repo.isPrivate) {
-        content = `# ${repo.title || repoName}\n\n> 🔒 **Private Repository Architecture**\n\n${repo.description}\n\n*Documentation is synced automatically via GitHub Actions.*`;
+        content = `# ${repo.title || repoName}\n\n> 🔒 **Private Repository Architecture**\n\n${repo.description}\n\n*Documentation is synced locally in docs/repos/${repoName}/README.md.*`;
       } else {
         content = `# ${repo.title || repoName}\n\n${repo.description || ""}\n\nYou can explore the source code directly on [GitHub](https://github.com/khalidabdullahh/${repoName}).`;
       }
@@ -457,23 +457,39 @@ export class ProjectsSection {
     return content;
   }
 
-  renderMarkdown(md, repoName) {
+  renderMarkdown(md, repoName, isPrivate = false) {
     if (!md) return "<p>No content.</p>";
     let html = md;
 
-    // Badges & Images (Convert relative links to raw github)
-    html = html.replace(/!\[(.*?)\]\((.*?)\)/gim, (match, alt, src) => {
-      let resolvedSrc = src;
-      if (!src.startsWith("http")) {
-        resolvedSrc = `https://raw.githubusercontent.com/khalidabdullahh/${repoName}/main/${src.replace(/^\.\//, "")}`;
+    // Resolve image source
+    const resolveImgSrc = (src) => {
+      if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) return src;
+      const cleanSrc = src.replace(/^\.\//, "");
+      if (isPrivate) {
+        return `docs/repos/${repoName}/${cleanSrc}`;
       }
+      return `https://raw.githubusercontent.com/khalidabdullahh/${repoName}/main/${cleanSrc}`;
+    };
+
+    // HTML Images & Sources in markdown
+    html = html.replace(/<img([^>]+)src=["']([^"']+)["']([^>]*)>/gim, (m, pre, src, post) => {
+      return `<img${pre}src="${resolveImgSrc(src)}"${post} class="rounded-xl border border-border max-w-full my-2 inline-block">`;
+    });
+    html = html.replace(/<source([^>]+)srcset=["']([^"']+)["']([^>]*)>/gim, (m, pre, src, post) => {
+      return `<source${pre}srcset="${resolveImgSrc(src)}"${post}>`;
+    });
+
+    // Markdown Images: ![alt](src)
+    html = html.replace(/!\[(.*?)\]\((.*?)\)/gim, (match, alt, src) => {
+      const resolvedSrc = resolveImgSrc(src);
       return `<div class="my-3"><img src="${resolvedSrc}" alt="${alt}" class="rounded-xl border border-border shadow-md max-w-full inline-block" /></div>`;
     });
 
-    // Links
+    // Links: [text](url)
     html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener" class="text-cyan underline hover:text-cyan-glow font-medium">$1</a>');
     
     // Headings
+    html = html.replace(/^#### (.*$)/gim, '<h4 class="text-sm font-bold text-text-primary mt-4 mb-2">$1</h4>');
     html = html.replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-text-primary mt-6 mb-2">$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2 class="text-lg font-black text-text-primary mt-8 mb-3 pb-1 border-b border-border">$1</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-black text-text-primary mt-6 mb-4 font-display">$1</h1>');
@@ -493,12 +509,15 @@ export class ProjectsSection {
     html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-text-primary">$1</strong>');
     html = html.replace(/\*([^*]+)\*/g, '<em class="italic text-text-primary/90">$1</em>');
     
+    // Unordered List items (- or *)
+    html = html.replace(/^[\*\-]\s+(.*$)/gim, '<li class="ml-4 list-disc text-text-secondary my-1">$1</li>');
+
     // Horizontal Rule
     html = html.replace(/^---$/gim, '<hr class="my-6 border-border" />');
 
     const paragraphs = html.split("\n\n");
     return paragraphs.map(p => {
-      if (p.startsWith("<h") || p.startsWith("<pre") || p.startsWith("<blockquote") || p.startsWith("<hr") || p.startsWith("<div")) return p;
+      if (p.startsWith("<h") || p.startsWith("<pre") || p.startsWith("<blockquote") || p.startsWith("<hr") || p.startsWith("<div") || p.startsWith("<li") || p.startsWith("<picture") || p.startsWith("<p")) return p;
       return `<p class="mb-3 leading-relaxed">${p.replace(/\n/g, "<br>")}</p>`;
     }).join("");
   }
