@@ -2,13 +2,14 @@
  * Live GitHub Repositories Showcase & Interactive README Reader
  * Author: Khalid Abdullah
  * Features:
- *  - Real-time GitHub API Repository Telemetry
- *  - 1-Click Live README.md Fetch & Markdown Rendering Modal
+ *  - Curated Repository Whitelist (Filters out unwanted forks/configs)
+ *  - 1-Click Live README.md Fetch & Markdown Rendering Modal (Public & Private)
  *  - Repository Search & Language Filter
- *  - Copy Clone URL & Quick GitHub Navigation
+ *  - Real-time GitHub API Telemetry Sync
  */
 
 import { PROJECTS } from "../data/projects.js";
+import { SHOWCASE_REPOSITORIES } from "../data/showcaseRepos.js";
 import { githubService } from "../services/GitHubService.js";
 
 export class ProjectsSection {
@@ -18,6 +19,7 @@ export class ProjectsSection {
     this.activeRepo = null;
     this.searchQuery = "";
     this.selectedLanguage = "all";
+    this.showAllPublicRepos = false;
 
     this.init();
   }
@@ -28,9 +30,33 @@ export class ProjectsSection {
     this.bindEvents();
   }
 
-  getFilteredRepos() {
+  getReposToDisplay() {
     const liveRepos = githubService.repos || [];
-    return liveRepos.filter(repo => {
+
+    let baseList = [];
+    if (this.showAllPublicRepos) {
+      baseList = liveRepos;
+    } else {
+      // Prioritize curated SHOWCASE_REPOSITORIES
+      baseList = SHOWCASE_REPOSITORIES.map(curated => {
+        const liveMatch = liveRepos.find(r => r.name.toLowerCase() === curated.name.toLowerCase());
+        return {
+          name: curated.name,
+          title: curated.title || curated.name,
+          description: curated.description || (liveMatch ? liveMatch.description : "Engineering repository."),
+          language: curated.language || (liveMatch ? liveMatch.language : "Code"),
+          stars: liveMatch ? liveMatch.stars : (curated.isPrivate ? "Private" : 0),
+          forks: liveMatch ? liveMatch.forks : 0,
+          pushedAt: liveMatch ? liveMatch.pushedAt : new Date().toISOString(),
+          htmlUrl: curated.isPrivate ? null : `https://github.com/khalidabdullahh/${curated.name}`,
+          isPrivate: !!curated.isPrivate,
+          liveUrl: curated.liveUrl || null,
+          defaultBranch: curated.branch || (liveMatch ? liveMatch.defaultBranch : "main")
+        };
+      });
+    }
+
+    return baseList.filter(repo => {
       const matchesSearch = !this.searchQuery || 
         repo.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         (repo.description && repo.description.toLowerCase().includes(this.searchQuery.toLowerCase()));
@@ -43,18 +69,16 @@ export class ProjectsSection {
   }
 
   getAvailableLanguages() {
-    const liveRepos = githubService.repos || [];
+    const repos = this.getReposToDisplay();
     const langs = new Set();
-    liveRepos.forEach(r => {
+    repos.forEach(r => {
       if (r.language && r.language !== "Unknown") langs.add(r.language);
     });
     return Array.from(langs);
   }
 
   render() {
-    const featuredProjects = PROJECTS.filter(p => p.featured);
-    const supportingProjects = PROJECTS.filter(p => !p.featured);
-    const filteredRepos = this.getFilteredRepos();
+    const reposToDisplay = this.getReposToDisplay();
     const availableLangs = this.getAvailableLanguages();
 
     const lastSyncLabel = githubService.lastSyncTime 
@@ -69,13 +93,13 @@ export class ProjectsSection {
           <div>
             <div class="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-cyan uppercase mb-2">
               <span>📂</span>
-              <span>GITHUB REPOSITORIES // LIVE README SHOWCASE</span>
+              <span>ENGINEERED REPOSITORIES // LIVE README SHOWCASE</span>
             </div>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-text-primary tracking-tight font-display">
-              Open Source Repositories & Documentation
+              Repositories & Architectural Documentation
             </h2>
             <p class="text-base text-text-secondary mt-2 max-w-2xl">
-              Explore live code repositories with direct in-browser <code class="text-cyan font-mono font-bold">README.md</code> documentation reader.
+              Curated repositories featuring direct in-browser <code class="text-cyan font-mono font-bold">README.md</code> documentation reader.
             </p>
           </div>
 
@@ -101,7 +125,7 @@ export class ProjectsSection {
 
           <div class="flex flex-wrap items-center gap-2">
             <button class="lang-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${this.selectedLanguage === "all" ? "bg-cyan text-black" : "bg-surface hover:bg-border text-text-secondary"}" data-lang="all">
-              All (${githubService.repos.length})
+              All (${reposToDisplay.length})
             </button>
             ${availableLangs.map(lang => `
               <button class="lang-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${this.selectedLanguage.toLowerCase() === lang.toLowerCase() ? "bg-cyan text-black" : "bg-surface hover:bg-border text-text-secondary"}" data-lang="${lang}">
@@ -112,25 +136,32 @@ export class ProjectsSection {
         </div>
 
         <!-- Repositories Grid -->
-        ${filteredRepos.length === 0 ? `
+        ${reposToDisplay.length === 0 ? `
           <div class="p-12 text-center rounded-3xl bg-surface border border-border">
             <p class="text-sm font-mono text-text-muted">No repositories match your filter query.</p>
           </div>
         ` : `
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            ${filteredRepos.map(repo => `
-              <div class="group relative p-6 rounded-2xl bg-surface border border-border hover:border-cyan/50 hover:bg-surface-elevated/70 transition-all duration-300 flex flex-col justify-between shadow-xl repo-card cursor-pointer" data-repo-name="${repo.name}" data-repo-url="${repo.htmlUrl}">
+            ${reposToDisplay.map(repo => `
+              <div class="group relative p-6 rounded-2xl bg-surface border ${repo.isPrivate ? 'border-amber-500/40 hover:border-amber-400' : 'border-border hover:border-cyan/50'} hover:bg-surface-elevated/70 transition-all duration-300 flex flex-col justify-between shadow-xl repo-card cursor-pointer" data-repo-name="${repo.name}" data-is-private="${repo.isPrivate ? 'true' : 'false'}">
                 <div>
                   <div class="flex items-center justify-between mb-3">
                     <span class="flex items-center gap-1.5 text-xs font-mono text-text-muted">
                       <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${githubService.getLanguageColor(repo.language)}"></span>
                       <span class="font-bold text-text-primary">${repo.language}</span>
                     </span>
-                    <span class="text-[11px] font-mono text-text-muted">${githubService.getTimeAgo(repo.pushedAt)}</span>
+
+                    ${repo.isPrivate ? `
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
+                        🔒 Private Architecture
+                      </span>
+                    ` : `
+                      <span class="text-[11px] font-mono text-text-muted">${githubService.getTimeAgo(repo.pushedAt)}</span>
+                    `}
                   </div>
 
                   <h3 class="text-lg font-bold text-text-primary group-hover:text-cyan transition-colors font-mono tracking-tight mb-2 flex items-center justify-between">
-                    <span class="truncate">${repo.name}</span>
+                    <span class="truncate">${repo.title || repo.name}</span>
                     <span class="text-xs font-mono text-cyan opacity-0 group-hover:opacity-100 transition-opacity">📖 Readme ↗</span>
                   </h3>
 
@@ -142,23 +173,34 @@ export class ProjectsSection {
                 <!-- Card Footer Actions -->
                 <div class="mt-6 pt-4 border-t border-border/70 flex items-center justify-between text-xs font-mono">
                   <div class="flex items-center gap-3">
-                    <span class="text-amber-400 font-bold flex items-center gap-1">
-                      <span>★</span>
-                      <span>${repo.stars}</span>
-                    </span>
-                    <span class="text-text-muted flex items-center gap-1">
-                      <span>🍴</span>
-                      <span>${repo.forks}</span>
-                    </span>
+                    ${repo.isPrivate ? `
+                      <span class="text-[11px] text-text-muted">Proprietary Core</span>
+                    ` : `
+                      <span class="text-amber-400 font-bold flex items-center gap-1">
+                        <span>★</span>
+                        <span>${repo.stars}</span>
+                      </span>
+                      <span class="text-text-muted flex items-center gap-1">
+                        <span>🍴</span>
+                        <span>${repo.forks}</span>
+                      </span>
+                    `}
                   </div>
 
                   <div class="flex items-center gap-2">
                     <button class="btn-open-readme px-3 py-1.5 rounded-lg bg-cyan/15 hover:bg-cyan text-cyan hover:text-black border border-cyan/40 text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1" data-repo-name="${repo.name}">
                       <span>📖 README</span>
                     </button>
-                    <a href="${repo.htmlUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-surface-elevated hover:bg-border border border-border text-text-muted hover:text-text-primary transition-all" title="View on GitHub" onclick="event.stopPropagation()">
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    </a>
+                    ${repo.liveUrl ? `
+                      <a href="${repo.liveUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 hover:text-black text-emerald-300 border border-emerald-500/30 transition-all font-bold" title="Open Live Web App" onclick="event.stopPropagation()">
+                        Live ↗
+                      </a>
+                    ` : ""}
+                    ${repo.htmlUrl ? `
+                      <a href="${repo.htmlUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-surface-elevated hover:bg-border border border-border text-text-muted hover:text-text-primary transition-all" title="View on GitHub" onclick="event.stopPropagation()">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                      </a>
+                    ` : ""}
                   </div>
                 </div>
               </div>
@@ -204,7 +246,7 @@ export class ProjectsSection {
 
           <!-- Modal Footer -->
           <div class="p-4 bg-surface-elevated/80 border-t border-border flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs font-mono">
-            <div class="flex items-center gap-2 text-text-muted">
+            <div id="readme-clone-container" class="flex items-center gap-2 text-text-muted">
               <span>Clone:</span>
               <code id="readme-clone-cmd" class="px-2 py-1 rounded bg-surface border border-border text-cyan select-all">git clone https://github.com/khalidabdullahh/...</code>
             </div>
@@ -243,7 +285,6 @@ export class ProjectsSection {
       this.searchQuery = e.target.value;
       this.render();
       this.bindEvents();
-      // Restore cursor focus
       const updatedInput = document.getElementById("repo-search-input");
       if (updatedInput) {
         updatedInput.focus();
@@ -301,7 +342,8 @@ export class ProjectsSection {
   }
 
   async openReadmeModal(repoName) {
-    const repo = (githubService.repos || []).find(r => r.name.toLowerCase() === repoName.toLowerCase());
+    const repos = this.getReposToDisplay();
+    const repo = repos.find(r => r.name.toLowerCase() === repoName.toLowerCase());
     if (!repo) return;
 
     this.activeRepo = repo;
@@ -312,12 +354,29 @@ export class ProjectsSection {
     const modalGithubLink = document.getElementById("readme-modal-github-link");
     const modalContent = document.getElementById("readme-modal-content");
     const cloneCmd = document.getElementById("readme-clone-cmd");
+    const cloneContainer = document.getElementById("readme-clone-container");
+    const copyCloneBtn = document.getElementById("btn-copy-clone-cmd");
 
-    if (modalTitle) modalTitle.textContent = repo.name;
-    if (modalSubtitle) modalSubtitle.textContent = repo.description || "GitHub Repository Documentation";
-    if (modalBadge) modalBadge.textContent = repo.language || "Repository";
-    if (modalGithubLink) modalGithubLink.href = repo.htmlUrl;
-    if (cloneCmd) cloneCmd.textContent = `git clone https://github.com/khalidabdullahh/${repo.name}.git`;
+    if (modalTitle) modalTitle.textContent = repo.title || repo.name;
+    if (modalSubtitle) modalSubtitle.textContent = repo.description || "Repository Architecture Documentation";
+    if (modalBadge) modalBadge.textContent = repo.isPrivate ? "🔒 Private Architecture" : (repo.language || "Repository");
+    
+    if (modalGithubLink) {
+      if (repo.isPrivate) {
+        modalGithubLink.classList.add("hidden");
+      } else {
+        modalGithubLink.classList.remove("hidden");
+        modalGithubLink.href = repo.htmlUrl;
+      }
+    }
+
+    if (repo.isPrivate) {
+      if (cloneContainer) cloneContainer.innerHTML = `<span class="text-amber-400 font-mono">🔒 Source code is private/proprietary. Documentation is public.</span>`;
+      if (copyCloneBtn) copyCloneBtn.classList.add("hidden");
+    } else {
+      if (cloneContainer) cloneContainer.innerHTML = `<span>Clone:</span><code id="readme-clone-cmd" class="px-2 py-1 rounded bg-surface border border-border text-cyan select-all">git clone https://github.com/khalidabdullahh/${repo.name}.git</code>`;
+      if (copyCloneBtn) copyCloneBtn.classList.remove("hidden");
+    }
 
     if (modal) {
       modal.classList.remove("hidden");
@@ -329,13 +388,13 @@ export class ProjectsSection {
       modalContent.innerHTML = `
         <div class="p-12 text-center space-y-3">
           <div class="w-8 h-8 border-2 border-cyan border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p class="text-xs font-mono text-cyan">Fetching README.md from GitHub...</p>
+          <p class="text-xs font-mono text-cyan">Fetching README documentation...</p>
         </div>
       `;
     }
 
     // Fetch README content
-    const readmeMarkdown = await this.fetchReadme(repo.name, repo.defaultBranch || "main");
+    const readmeMarkdown = await this.fetchReadme(repo);
     if (modalContent) {
       modalContent.innerHTML = this.renderMarkdown(readmeMarkdown, repo.name);
     }
@@ -351,29 +410,47 @@ export class ProjectsSection {
     this.activeRepo = null;
   }
 
-  async fetchReadme(repoName, defaultBranch = "main") {
+  async fetchReadme(repo) {
+    const repoName = repo.name;
     if (this.readmeCache.has(repoName)) {
       return this.readmeCache.get(repoName);
     }
 
-    const branches = [defaultBranch, "main", "master"];
     let content = null;
 
-    for (const branch of branches) {
-      try {
-        const url = `https://raw.githubusercontent.com/khalidabdullahh/${repoName}/${branch}/README.md`;
-        const res = await fetch(url);
-        if (res.ok) {
-          content = await res.text();
-          break;
+    // 1. If private or synced locally, try local docs path first
+    try {
+      const localRes = await fetch(`docs/repos/${repoName}/README.md?_t=${Date.now()}`);
+      if (localRes.ok) {
+        content = await localRes.text();
+      }
+    } catch (e) {
+      console.warn(`Local docs lookup failed for ${repoName}`);
+    }
+
+    // 2. If public and no local doc found, fetch from GitHub raw
+    if (!content && !repo.isPrivate) {
+      const branches = [repo.defaultBranch || "main", "main", "master"];
+      for (const branch of branches) {
+        try {
+          const url = `https://raw.githubusercontent.com/khalidabdullahh/${repoName}/${branch}/README.md`;
+          const res = await fetch(url);
+          if (res.ok) {
+            content = await res.text();
+            break;
+          }
+        } catch (e) {
+          console.warn(`Could not fetch README for ${repoName} on branch ${branch}`);
         }
-      } catch (e) {
-        console.warn(`Could not fetch README for ${repoName} on branch ${branch}`);
       }
     }
 
     if (!content) {
-      content = `# ${repoName}\n\n*No README.md documentation file found in this repository.* \n\nYou can explore the source code directly on [GitHub](https://github.com/khalidabdullahh/${repoName}).`;
+      if (repo.isPrivate) {
+        content = `# ${repo.title || repoName}\n\n> 🔒 **Private Repository Architecture**\n\n${repo.description}\n\n*Documentation is synced automatically via GitHub Actions.*`;
+      } else {
+        content = `# ${repo.title || repoName}\n\n${repo.description || ""}\n\nYou can explore the source code directly on [GitHub](https://github.com/khalidabdullahh/${repoName}).`;
+      }
     }
 
     this.readmeCache.set(repoName, content);

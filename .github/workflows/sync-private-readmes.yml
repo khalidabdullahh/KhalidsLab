@@ -1,0 +1,63 @@
+name: Sync Private Repository READMEs
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Auto-syncs every 6 hours
+  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync-readmes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout KhalidsLab
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PRIVATE_REPO_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Create Docs Directory
+        run: mkdir -p docs/repos
+
+      - name: Fetch and Sync Private Repository READMEs
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "No PRIVATE_REPO_TOKEN secret configured. Skipping private repo sync."
+            exit 0
+          fi
+
+          # Read repositories marked as isPrivate from showcaseRepos or list
+          # Add the names of private repos here (space separated)
+          PRIVATE_REPOS=("Trading-OS" "Aegis-Focus" "Quant-Vault")
+
+          for REPO in "${PRIVATE_REPOS[@]}"; do
+            echo "Attempting to sync README for private repository: $REPO..."
+            HTTP_STATUS=$(curl -s -o "docs/repos/${REPO}_temp.md" -w "%{http_code}" \
+              -H "Authorization: token $GH_TOKEN" \
+              -H "Accept: application/vnd.github.v3.raw" \
+              "https://api.github.com/repos/${{ github.repository_owner }}/$REPO/readme")
+
+            if [ "$HTTP_STATUS" -eq 200 ]; then
+              mkdir -p "docs/repos/$REPO"
+              mv "docs/repos/${REPO}_temp.md" "docs/repos/$REPO/README.md"
+              echo "✓ Successfully synced README for $REPO"
+            else
+              rm -f "docs/repos/${REPO}_temp.md"
+              echo "ℹ Repository $REPO returned HTTP $HTTP_STATUS"
+            fi
+          done
+
+      - name: Commit and Push Updated READMEs
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/repos/
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore(docs): auto-sync private repository READMEs [skip ci]"
+            git push origin main
+          fi
