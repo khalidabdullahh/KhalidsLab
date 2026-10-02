@@ -5,31 +5,6 @@
 
 export const TOOLS = [
   {
-    id: "tool-cv-builder",
-    name: "AI CV Builder v2.0",
-    tagline: "Build an ATS-optimized, job-ready resume in minutes with Google Gemini AI.",
-    category: "Career & AI",
-    icon: "file-text",
-    status: "Live / Production",
-    statusColor: "emerald",
-    isInteractiveInSite: false,
-    externalUrl: "https://first-project-plum-phi.vercel.app",
-    featured: true,
-    badge: "Flagship Product",
-    description: "An AI-powered CV generator with 10 industry-standard templates (Classic ATS, Modern Dark Sidebar, Executive Minimalist, Creative Developer Terminal, Swiss Grid). Features real-time AI bullet polishing and 1-click clean HD PDF export.",
-    capabilities: [
-      "10 Professional Design Models for developers, researchers & executives",
-      "Built-in Google Gemini AI writing assistant for summaries & achievements",
-      "100% ATS-Compliant structure to maximize recruiter scanner pass rates",
-      "Instant 1-Click HD PDF Download with clean vector typography",
-      "Custom profile photo upload with automatic client-side compression"
-    ],
-    pricing: "Free & Open Web App",
-    actionLabel: "Launch AI CV Builder ↗",
-    github: "https://github.com/khalidabdullahh/CV-Builder",
-    relatedProject: "proj-cv-builder"
-  },
-  {
     id: "tool-devils-door",
     name: "Devil's Door",
     tagline: "Endless Dark Fantasy 2.5D action-platformer with 6 playable ninja & samurai heroes.",
@@ -54,97 +29,27 @@ export const TOOLS = [
     relatedProject: "proj-devil-door"
   },
   {
-    id: "tool-arenex",
-    name: "ARENEX Esports Platform",
-    tagline: "Full-stack tournament engine with PostgreSQL RLS & anti-replay payments.",
-    category: "Full-Stack & Backend",
-    icon: "shield-check",
-    status: "Active Engine",
+    id: "tool-khalids-lab-cms",
+    name: "KhalidsLab Admin Studio",
+    tagline: "In-browser Git-based CMS & Markdown authoring workbench.",
+    category: "Developer Tools",
+    icon: "terminal",
+    status: "Live / Active",
     statusColor: "emerald",
     isInteractiveInSite: false,
-    externalUrl: "https://github.com/khalidabdullahh/eSports",
+    externalUrl: "admin.html",
     featured: true,
-    badge: "Competitive Engine",
-    description: "A production-grade esports tournament platform engineered for match matchmaking, automated payment verification workflows, and time-gated lobby credential distribution.",
+    badge: "Built-in Tool",
+    description: "A lightweight, secure CMS and Markdown authoring studio built directly into KhalidsLab for publishing articles and managing engineering case studies.",
     capabilities: [
-      "Role-Based Access Control (USER, SUPER_ADMIN, OWNER) at Edge & Database layers",
-      "Anti-replay payment verification state machine for local MFS gateways",
-      "Time-gated room credential release engine for confirmed players",
-      "Dynamic leaderboard scoring linked to real player profiles via Supabase Storage"
+      "Rich Markdown formatting toolbar with real-time live preview",
+      "Drag-and-Drop and file selector image embedding",
+      "Git-backed flat file content architecture with zero server overhead",
+      "Word count and estimated reading time telemetry"
     ],
-    pricing: "Open Source Platform",
-    actionLabel: "Explore on GitHub ↗",
-    github: "https://github.com/khalidabdullahh/eSports",
-    relatedProject: "proj-arenex"
-  },
-  {
-    id: "tool-trading-os",
-    name: "Trading OS Suite",
-    tagline: "Quantitative finance strategy, technical indicator & volatility engine.",
-    category: "Quantitative Finance",
-    icon: "trending-up",
-    status: "Active Repository",
-    statusColor: "amber",
-    isInteractiveInSite: false,
-    externalUrl: "https://github.com/khalidabdullahh/Trading-OS",
-    featured: false,
-    badge: "Quant Suite",
-    description: "Quantitative finance suite containing JavaScript indicator engines, Pine Script strategies, and dynamic risk management models.",
-    capabilities: [
-      "Dynamic volatility clustering and trend indicators",
-      "Custom Pine Script strategies for multi-asset backtesting",
-      "Risk-adjusted position sizing models"
-    ],
-    pricing: "Open Source Repository",
-    actionLabel: "Explore on GitHub ↗",
-    github: "https://github.com/khalidabdullahh/Trading-OS",
-    relatedProject: "proj-trading-os"
-  },
-  {
-    id: "tool-aurex",
-    name: "AuRex Combat Framework",
-    tagline: "Deterministic Action Combat Framework & Frame-Locked State Machines.",
-    category: "Game Engineering",
-    icon: "zap",
-    status: "Active Engine",
-    statusColor: "violet",
-    isInteractiveInSite: false,
-    externalUrl: "https://github.com/khalidabdullahh/AuRex",
-    featured: false,
-    badge: "Combat Engine",
-    description: "A high-performance action combat engineering framework featuring deterministic state transitions, input buffering queues, and spatial collision indexing for multi-entity combat systems.",
-    capabilities: [
-      "Deterministic frame-locked input buffering queue",
-      "Decoupled movement vs combat hierarchical state machine",
-      "Spatial broad-phase hitbox/hurtbox partitioner"
-    ],
-    pricing: "Open Source Framework",
-    actionLabel: "Explore on GitHub ↗",
-    github: "https://github.com/khalidabdullahh/AuRex",
-    relatedProject: "proj-aurex"
-  },
-  {
-    id: "tool-ats-analyzer",
-    name: "ATS Resume Keyword Scanner",
-    tagline: "Audit your CV against target job descriptions for keyword alignment.",
-    category: "Interactive Tool",
-    icon: "check-circle-2",
-    status: "Interactive In-Browser",
-    statusColor: "emerald",
-    isInteractiveInSite: true,
-    interactiveComponent: "ATSAnalyzer",
-    featured: true,
-    badge: "In-Browser Tool",
-    description: "Paste your resume summary alongside a target job description to compute instant lexical overlap, technical keyword extraction, and an overall ATS Match Score.",
-    capabilities: [
-      "Instant lexical and token-level similarity calculation",
-      "Automatic technical keyword and action-verb extraction",
-      "Identifies missing high-value keywords present in job descriptions",
-      "Readability index and bullet point action-verb density scoring"
-    ],
-    pricing: "100% Free In-Browser",
-    actionLabel: "Open Keyword Scanner →",
-    github: "https://github.com/khalidabdullahh/CV-Builder",
-    relatedProject: "proj-cv-builder"
+    pricing: "Internal Tool",
+    actionLabel: "Launch Studio ↗",
+    github: "https://github.com/khalidabdullahh/KhalidsLab",
+    relatedProject: "proj-khalids-lab"
   }
 ];

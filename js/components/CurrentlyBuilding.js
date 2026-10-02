@@ -8,64 +8,7 @@ import { githubService } from "../services/GitHubService.js";
 export class CurrentlyBuilding {
   constructor(containerId) {
     this.container = document.getElementById(containerId);
-    this.items = [
-      {
-        num: "01",
-        name: "AI CV Builder v2.0",
-        repoMatch: "CV-Builder",
-        tagline: "ATS-optimized resume generator with 10 templates and Google Gemini AI writer.",
-        status: "Shipping / Live",
-        statusColor: "emerald",
-        progress: 100,
-        tech: ["Next.js 16", "React 19", "Gemini 1.5", "Tailwind"],
-        metric: "10 Templates • HD PDF Export",
-        actionUrl: "https://first-project-plum-phi.vercel.app",
-        actionLabel: "Launch App ↗",
-        isExternal: true
-      },
-      {
-        num: "02",
-        name: "HMM Market Regime Suite",
-        repoMatch: "Trading-OS",
-        tagline: "Unsupervised statistical segmentation of asset volatility and trend regimes.",
-        status: "Experimenting",
-        statusColor: "amber",
-        progress: 78,
-        tech: ["Python", "HMMlearn", "NumPy", "Canvas 2D"],
-        metric: "3-State Gaussian Markov Engine",
-        actionUrl: "#tools",
-        actionLabel: "Open Simulator",
-        isExternal: false
-      },
-      {
-        num: "03",
-        name: "ARENEX Esports Engine",
-        repoMatch: "eSports",
-        tagline: "Production-grade tournament platform with anti-replay payments & Edge RBAC.",
-        status: "Active / Live",
-        statusColor: "emerald",
-        progress: 95,
-        tech: ["Next.js 15+", "Supabase", "PostgreSQL RLS", "Server Actions"],
-        metric: "11 Tables • 14 RLS Policies",
-        actionUrl: "#projects",
-        actionLabel: "View Case Study",
-        isExternal: false
-      },
-      {
-        num: "04",
-        name: "Oops! (Chaos Realm) Game",
-        repoMatch: "Oops",
-        tagline: "Zero-allocation state-machine physics and procedural chiptune audio in browser.",
-        status: "Shipped",
-        statusColor: "emerald",
-        progress: 100,
-        tech: ["Phaser 2D", "Web Audio API", "PWA"],
-        metric: "150 Multiverse Levels • 60 FPS",
-        actionUrl: "https://oops-snowy-three.vercel.app/",
-        actionLabel: "Play Live ↗",
-        isExternal: true
-      }
-    ];
+    this.items = [];
 
     this.init();
   }
@@ -78,6 +21,11 @@ export class CurrentlyBuilding {
 
   render() {
     const latestPush = githubService.latestPush;
+
+    if ((!this.items || this.items.length === 0) && !latestPush) {
+      this.container.innerHTML = "";
+      return;
+    }
 
     this.container.innerHTML = `
       <div class="relative py-12 border-y border-border/80 bg-surface/40 backdrop-blur-sm">

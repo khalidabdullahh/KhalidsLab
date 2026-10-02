@@ -4,8 +4,8 @@
  * Fetches and caches published posts from GitHub & local storage
  */
 
-const POSTS_CACHE_KEY = "khalid_posts_index_cache_v1";
-const POSTS_CACHE_TIME_KEY = "khalid_posts_index_time_v1";
+const POSTS_CACHE_KEY = "khalid_posts_index_cache_v2";
+const POSTS_CACHE_TIME_KEY = "khalid_posts_index_time_v2";
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
 
 export class PostService {
@@ -17,21 +17,7 @@ export class PostService {
   }
 
   initDefaultPosts() {
-    this.posts = [
-      {
-        id: "post-welcome-digital-lab",
-        slug: "welcome-to-digital-lab",
-        title: "Welcome to My Digital Lab & Engineering Space",
-        tagline: "Why I built a living personal laboratory instead of a traditional portfolio.",
-        category: "Announcement",
-        categoryColor: "cyan",
-        date: "2026-09-03",
-        readTime: "3 min read",
-        tags: ["Digital Lab", "Engineering", "Architecture", "Open Source"],
-        file: "posts/welcome-to-digital-lab.json",
-        published: true
-      }
-    ];
+    this.posts = [];
   }
 
   async init() {
