@@ -1,0 +1,139 @@
+[
+  {
+    "id": "post-aegis-focus-architectural-breakdown",
+    "slug": "aegis-focus-architectural-breakdown",
+    "title": "Aegis Focus (ASAR): Engineering an Unbypassable Local-First Android Digital Discipline Engine",
+    "tagline": "A deep architectural investigation into building an unbypassable Android focus shield with Kotlin Jetpack Compose, Room SQLite, AccessibilityService heuristics, and Device Administrator enforcement.",
+    "category": "Mobile Systems & Security",
+    "categoryColor": "cyan",
+    "date": "2026-10-10",
+    "readTime": "12 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Android",
+      "Kotlin",
+      "Jetpack Compose",
+      "Room SQLite",
+      "Cybersecurity",
+      "Offline Architecture",
+      "Digital Discipline"
+    ],
+    "file": "posts/aegis-focus-architectural-breakdown.json",
+    "published": true
+  },
+  {
+    "id": "post-lumen-os-institutional-quant-terminal-architecture",
+    "slug": "lumen-os-institutional-quant-terminal-architecture",
+    "title": "Lumen OS (TradingHub): Architecture of an Institutional Quantitative Terminal & Modular Algorithmic Desk",
+    "tagline": "Engineering a Bloomberg-grade high-frequency quantitative terminal: L2 WebSocket depth ladders, autonomous dislocation alpha bots, macro yield curve transmission matrices, and zero-trust cloud sync.",
+    "category": "Quantitative Finance & Systems",
+    "categoryColor": "cyan",
+    "date": "2026-10-11",
+    "readTime": "12 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Quantitative Finance",
+      "Bloomberg Terminal",
+      "TypeScript",
+      "React",
+      "High-Frequency Trading",
+      "WebSockets",
+      "Algorithmic Trading",
+      "PostgreSQL"
+    ],
+    "file": "posts/lumen-os-institutional-quant-terminal-architecture.json",
+    "published": true
+  },
+  {
+    "id": "post-codeforge-mobile-android-ide-architecture",
+    "slug": "codeforge-mobile-android-ide-architecture",
+    "title": "CodeForge Mobile: Engineering an Android-First, VS Code-Grade IDE for Touch & Web",
+    "tagline": "How we engineered a desktop-class mobile IDE: Monaco Editor integration, touch-optimized quick-symbol ergonomics, AI coding copilot, offline Git, and client-side web runtime compilation.",
+    "category": "Developer Tools & Mobile",
+    "categoryColor": "cyan",
+    "date": "2026-10-12",
+    "readTime": "12 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Mobile Development",
+      "TypeScript",
+      "Monaco Editor",
+      "VS Code",
+      "Android",
+      "PWA",
+      "Capacitor",
+      "Web Development"
+    ],
+    "file": "posts/codeforge-mobile-android-ide-architecture.json",
+    "published": true
+  },
+  {
+    "id": "post-gesture-volume-geometric-recognition-android-utility",
+    "slug": "gesture-volume-geometric-recognition-android-utility",
+    "title": "GestureVolume: Mathematical Geometric Recognition & Battery-Free Android System Overlays",
+    "tagline": "Engineering a non-intrusive Android volume gesture utility: Multi-factor geometric circle recognition, WindowManager accessibility overlays, haptic acoustics, and zero-idle battery consumption.",
+    "category": "Mobile Systems & Algorithms",
+    "categoryColor": "cyan",
+    "date": "2026-10-13",
+    "readTime": "12 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Android",
+      "Kotlin",
+      "AccessibilityService",
+      "Algorithms",
+      "Computer Vision",
+      "Geometry",
+      "Jetpack Compose",
+      "Haptics"
+    ],
+    "file": "posts/gesture-volume-geometric-recognition-android-utility.json",
+    "published": true
+  },
+  {
+    "id": "post-ares-adaptive-reasoning-execution-system-architecture",
+    "slug": "ares-adaptive-reasoning-execution-system-architecture",
+    "title": "A.R.E.S. (Adaptive Reasoning & Execution System): Private Voice-Enabled Terminal AI Companion",
+    "tagline": "Designing an air-gapped, voice-enabled executive terminal companion: Local Ollama cognitive brains, neural Edge-TTS voice streaming, Rich terminal HUDs, and autonomous macOS/Linux action dispatchers.",
+    "category": "Artificial Intelligence & Systems",
+    "categoryColor": "cyan",
+    "date": "2026-10-14",
+    "readTime": "11 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Artificial Intelligence",
+      "Ollama",
+      "Edge-TTS",
+      "Python",
+      "Local LLM",
+      "Voice Assistant",
+      "Terminal HUD",
+      "Privacy Architecture"
+    ],
+    "file": "posts/ares-adaptive-reasoning-execution-system-architecture.json",
+    "published": true
+  },
+  {
+    "id": "post-freeaicv-careerhub-ats-engine-architecture",
+    "slug": "freeaicv-careerhub-ats-engine-architecture",
+    "title": "FreeAICV.me (CareerHub): Engineering an ATS-Certified AI Career Engine & Vector PDF Compiler",
+    "tagline": "Architecting an open-access AI career enablement platform: 30 recruiter-calibrated ATS templates, 18-point rubric audit engines, Google Gemini AI prompt distillation, and true single-page vector PDF compilation.",
+    "category": "AI & Full-Stack Systems",
+    "categoryColor": "cyan",
+    "date": "2026-10-15",
+    "readTime": "11 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Next.js",
+      "React",
+      "Gemini AI",
+      "ATS Architecture",
+      "PDF Generation",
+      "Career Tech",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "file": "posts/freeaicv-careerhub-ats-engine-architecture.json",
+    "published": true
+  }
+]

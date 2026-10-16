@@ -5,7 +5,6 @@
 </p>
 
 <p align="center">
-  <a href="https://www.amazon.com/dp/B0HKC7R38G" target="_blank"><img src="https://img.shields.io/badge/Amazon_Appstore-Available_Now-FF9900?style=for-the-badge&logo=amazon&logoColor=white" alt="Amazon Appstore" /></a>
   <a href="https://github.com/khalidabdullahh/GestureVolume/releases"><img src="https://img.shields.io/badge/Platform-Android_8.0+_(API_26+)-brightgreen.svg?style=for-the-badge&logo=android" alt="Platform" /></a>
   <a href="https://github.com/khalidabdullahh/GestureVolume/releases"><img src="https://img.shields.io/badge/Target_SDK-35_(Android_15)-blue.svg?style=for-the-badge" alt="Target SDK" /></a>
   <a href="https://buymeacoffee.com/khalidabdullahh"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" /></a>
@@ -14,8 +13,7 @@
 </p>
 
 <p align="center">
-  🛒 <b>Amazon Appstore:</b> <a href="https://www.amazon.com/dp/B0HKC7R38G">Get it on Amazon Appstore</a> &nbsp;|&nbsp; 
-  🌐 <b>Live Web Simulator:</b> <a href="https://khalidabdullahh.github.io/GestureVolume/">khalidabdullahh.github.io/GestureVolume/</a>
+  🌐 <b>Live Web Landing Page &amp; Simulator:</b> <a href="https://khalidabdullahh.github.io/GestureVolume/">https://khalidabdullahh.github.io/GestureVolume/</a>
 </p>
 
 ---
@@ -31,15 +29,7 @@ Physical volume buttons wear out, break, get stuck, or are awkwardly placed on t
 2. **Gesture Mode Activates Temporarily** — no permanent buttons, no edge activation.
 3. **Swipe Vertically (↑ / ↓)** to smoothly adjust media volume.
 4. **Modern Temporary HUD** displays volume level, icon, and numeric percentage.
----
-
-## 📥 Download & Install
-
-| Source | Link | Details |
-| :--- | :--- | :--- |
-| **Amazon Appstore** | [Get on Amazon Appstore](https://www.amazon.com/dp/B0HKC7R38G) | Official store release, automatic updates |
-| **GitHub Releases** | [Download APK](https://github.com/khalidabdullahh/GestureVolume/releases) | Standalone signed APK binaries |
-| **Web Simulator** | [Test Live Demo](https://khalidabdullahh.github.io/GestureVolume/) | Interactive in-browser gesture demo |
+5. **Auto-Dismiss** — after 3 seconds of inactivity, everything smoothly fades away into zero memory usage.
 
 ---
 

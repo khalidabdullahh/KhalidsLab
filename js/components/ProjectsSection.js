@@ -48,8 +48,9 @@ export class ProjectsSection {
           stars: liveMatch ? liveMatch.stars : (curated.isPrivate ? "Private" : 0),
           forks: liveMatch ? liveMatch.forks : 0,
           pushedAt: liveMatch ? liveMatch.pushedAt : new Date().toISOString(),
-          htmlUrl: curated.isPrivate ? null : `https://github.com/khalidabdullahh/${curated.name}`,
+          htmlUrl: curated.isPrivate ? null : (curated.htmlUrl || `https://github.com/khalidabdullahh/${curated.name}`),
           isPrivate: !!curated.isPrivate,
+          pinned: !!curated.pinned,
           liveUrl: curated.liveUrl || null,
           defaultBranch: curated.branch || (liveMatch ? liveMatch.defaultBranch : "main")
         };
@@ -143,7 +144,7 @@ export class ProjectsSection {
         ` : `
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             ${reposToDisplay.map(repo => `
-              <div class="group relative p-6 rounded-2xl bg-surface border ${repo.isPrivate ? 'border-amber-500/40 hover:border-amber-400' : 'border-border hover:border-cyan/50'} hover:bg-surface-elevated/70 transition-all duration-300 flex flex-col justify-between shadow-xl repo-card cursor-pointer" data-repo-name="${repo.name}" data-is-private="${repo.isPrivate ? 'true' : 'false'}">
+              <div class="group relative p-6 rounded-2xl bg-surface border ${repo.pinned ? 'border-cyan/50 hover:border-cyan shadow-cyan/5' : repo.isPrivate ? 'border-amber-500/40 hover:border-amber-400' : 'border-border hover:border-cyan/50'} hover:bg-surface-elevated/70 transition-all duration-300 flex flex-col justify-between shadow-xl repo-card cursor-pointer" data-repo-name="${repo.name}" data-is-private="${repo.isPrivate ? 'true' : 'false'}">
                 <div>
                   <div class="flex items-center justify-between mb-3">
                     <span class="flex items-center gap-1.5 text-xs font-mono text-text-muted">
@@ -151,13 +152,20 @@ export class ProjectsSection {
                       <span class="font-bold text-text-primary">${repo.language}</span>
                     </span>
 
-                    ${repo.isPrivate ? `
-                      <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
-                        🔒 Private Architecture
-                      </span>
-                    ` : `
-                      <span class="text-[11px] font-mono text-text-muted">${githubService.getTimeAgo(repo.pushedAt)}</span>
-                    `}
+                    <div class="flex items-center gap-1.5">
+                      ${repo.pinned ? `
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan/15 text-cyan border border-cyan/30 font-bold flex items-center gap-1">
+                          📌 Pinned
+                        </span>
+                      ` : ""}
+                      ${repo.isPrivate ? `
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
+                          🔒 Private
+                        </span>
+                      ` : `
+                        <span class="text-[11px] font-mono text-text-muted">${githubService.getTimeAgo(repo.pushedAt)}</span>
+                      `}
+                    </div>
                   </div>
 
                   <h3 class="text-lg font-bold text-text-primary group-hover:text-cyan transition-colors font-mono tracking-tight mb-2 flex items-center justify-between">
