@@ -194,7 +194,7 @@ export class PostsSection {
             ${post.title}
           </h1>
           ${post.tagline ? `<p class="text-sm sm:text-base text-text-secondary leading-relaxed font-medium pb-4 border-b border-border/80">${post.tagline}</p>` : ""}
-          <div class="markdown-article pt-2 space-y-4 text-sm sm:text-base leading-relaxed text-text-secondary">
+          <div class="markdown-body pt-2 space-y-4 text-sm sm:text-base leading-relaxed text-text-secondary">
             ${this.renderMarkdown(post.content || post.tagline || "")}
           </div>
         </div>
@@ -214,6 +214,30 @@ export class PostsSection {
 
   renderMarkdown(md) {
     if (!md) return "";
+
+    // If marked library is available (loaded via CDN in index.html)
+    if (typeof window !== "undefined" && window.marked && typeof window.marked.parse === "function") {
+      try {
+        window.marked.setOptions({
+          gfm: true,
+          breaks: true,
+          headerIds: false,
+          mangle: false
+        });
+
+        let parsedHtml = window.marked.parse(md);
+
+        // Ensure all external links open in a new tab safely with cyan accent styling
+        parsedHtml = parsedHtml.replace(/<a([^>]+)href=["']([^"']+)["']([^>]*)>/gim, (m, pre, href, post) => {
+          return `<a${pre}href="${href}" target="_blank" rel="noopener noreferrer" class="text-cyan hover:underline font-semibold inline-flex items-center gap-1"${post}>`;
+        });
+
+        return parsedHtml;
+      } catch (err) {
+        console.warn("Marked parse failed in PostsSection, using fallback:", err);
+      }
+    }
+
     let html = md;
 
     // Headers
@@ -233,6 +257,9 @@ export class PostsSection {
     // Inline code
     html = html.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-surface-elevated border border-border text-cyan text-xs font-mono">$1</code>');
 
+    // Links: [text](url)
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-cyan hover:underline font-semibold">$1</a>');
+
     // Bold & Italics
     html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-text-primary">$1</strong>');
     html = html.replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>');
@@ -247,7 +274,7 @@ export class PostsSection {
     // Paragraphs
     const lines = html.split("\n\n");
     return lines.map(line => {
-      if (line.startsWith("<h") || line.startsWith("<pre") || line.startsWith("<blockquote") || line.startsWith("<li") || line.startsWith("<hr")) {
+      if (line.startsWith("<h") || line.startsWith("<pre") || line.startsWith("<blockquote") || line.startsWith("<li") || line.startsWith("<hr") || line.startsWith("<table") || line.startsWith("<a")) {
         return line;
       }
       return `<p class="leading-relaxed text-text-secondary">${line.replace(/\n/g, "<br>")}</p>`;
