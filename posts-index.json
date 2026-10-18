@@ -1,5 +1,50 @@
 [
   {
+    "id": "post-gesture-volume-smart-on-screen-volume-slider-android",
+    "slug": "gesture-volume-smart-on-screen-volume-slider-android",
+    "title": "Gesture Volume: Smart On-Screen Volume Slider for Android (Official Gumroad Release)",
+    "tagline": "The official commercial release of Gesture Volume on Gumroad: Stop paying $50-$100 for broken physical volume button repairs. Full product breakdown, zero-battery overlay mechanics, and DRM-free standalone APK.",
+    "category": "Product Release & Mobile Utility",
+    "categoryColor": "cyan",
+    "date": "2026-10-18",
+    "readTime": "8 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Android",
+      "Gumroad",
+      "Product Launch",
+      "Gesture Volume",
+      "Indie App",
+      "Accessibility",
+      "Mobile Systems"
+    ],
+    "file": "posts/gesture-volume-smart-on-screen-volume-slider-android.json",
+    "published": true
+  },
+  {
+    "id": "post-aegis-focus-pro-unbreakable-discipline-launch",
+    "slug": "aegis-focus-pro-unbreakable-discipline-launch",
+    "title": "Aegis Focus Pro: Unbreakable Android Digital Discipline System Launches on Gumroad",
+    "tagline": "The official launch and complete product briefing for Aegis Focus Pro: 100% offline architecture, tamper-proof Device Admin Strict Mode, escalating mindful friction, zero telemetry, and instant pre-activated Pro delivery.",
+    "category": "Product Release & Systems",
+    "categoryColor": "emerald",
+    "date": "2026-10-18",
+    "readTime": "10 min read",
+    "author": "Khalid Abdullah",
+    "tags": [
+      "Product Launch",
+      "Aegis Focus Pro",
+      "Gumroad",
+      "Android",
+      "Digital Wellbeing",
+      "Kotlin",
+      "Privacy",
+      "Deep Work"
+    ],
+    "file": "posts/aegis-focus-pro-unbreakable-discipline-launch.json",
+    "published": true
+  },
+  {
     "id": "post-aegis-focus-architectural-breakdown",
     "slug": "aegis-focus-architectural-breakdown",
     "title": "Aegis Focus (ASAR): Engineering an Unbypassable Local-First Android Digital Discipline Engine",

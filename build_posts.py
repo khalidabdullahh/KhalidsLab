@@ -14,6 +14,8 @@ def build_index():
     
     # Priority order for pinned posts
     order_preference = [
+        'gesture-volume-smart-on-screen-volume-slider-android',
+        'aegis-focus-pro-unbreakable-discipline-launch',
         'aegis-focus-architectural-breakdown',
         'lumen-os-institutional-quant-terminal-architecture',
         'codeforge-mobile-android-ide-architecture',
